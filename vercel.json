@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "/resources/views/layouts",
+      "src": "api/index.php",
       "use": "vercel-php@0.6.2"
     },
     {
@@ -17,7 +17,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/resources/views/layouts"
+      "dest": "/api/index.php"
     }
   ]
 }
