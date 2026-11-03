@@ -1,0 +1,458 @@
+/* ===================================================
+   RAMEN DAPUR GILA — Pesanan Saya
+   =================================================== */
+
+
+:root {
+    --bg-body: #ffffff;
+    --bg-card: #ffffff;
+    --bg-elevated: #ffffff;
+    --bg-input: #ffffff;
+    --fg: #000000;
+    --fg-muted: #000000;
+    --fg-dim: #0a0a0a;
+    --accent: #e60808;
+    --accent-hover: #e03030;
+    --accent-glow: rgba(13, 11, 11, 0.3);
+    --accent-light: #c21f1f;
+    --border: #000000;
+    --border-light: #000000;
+    --success: #22c55e;
+    --success-bg: rgba(34, 197, 94, 0.12);
+    --danger: #ef4444;
+    --danger-bg: rgba(239, 68, 68, 0.12);
+    --warning: #eab308;
+    --warning-bg: rgba(234, 179, 8, 0.12);
+    --info: #3b82f6;
+    --info-bg: rgba(59, 130, 246, 0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-lg: 16px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg-body);
+    color: var(--fg);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.font-display { font-family: 'Space Grotesk', sans-serif; }
+a { color: inherit; text-decoration: none; }
+
+/* ===================================================
+   LAYOUT — Navigation
+   =================================================== */
+.nav-main {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: #ffffffd9;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+}
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+.nav-brand i { color: var(--accent-light); }
+
+.nav-links { display: flex; gap: 0.25rem; }
+.nav-link {
+    padding: 0.5rem 1rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--fg-muted);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+}
+.nav-link:hover { color: var(--fg); background: var(--bg-elevated); }
+.nav-link.active { color: var(--fg); }
+
+.nav-actions { display: flex; align-items: center; gap: 0.5rem; position: relative; }
+
+.nav-dropdown { position: relative; }
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    min-width: 180px;
+    padding: 0.4rem;
+    box-shadow: var(--shadow);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: all var(--transition);
+}
+.dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.84rem;
+    color: var(--fg-muted);
+    border-radius: 6px;
+    transition: all var(--transition);
+    border: none;
+    background: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+}
+.dropdown-item:hover { background: var(--bg-elevated); color: var(--fg); }
+
+.cart-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--fg);
+    font-size: 1.2rem;
+    padding: 0.4rem;
+}
+
+/* ---------- Page Content ---------- */
+.page-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 90px 1.5rem 3rem;
+}
+
+.page-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.page-title i { color: var(--accent-light); }
+.page-subtitle {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--fg);
+    font-weight: 600;
+    font-size: 0.82rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 0.45rem 0.9rem;
+    transition: all var(--transition);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: color 0.2s;
+    margin-bottom: 1.5rem;
+}
+.btn-back:hover { color: var(--fg); }
+
+/* ---------- Alert ---------- */
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.84rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    animation: alertSlide 0.3s ease;
+}
+.alert-success { background: var(--success-bg); color: #4ade80; border: 1px solid var(--success-border); }
+.alert-danger { background: var(--danger-bg); color: #f87171; border: 1px solid var(--danger-border); }
+@keyframes alertSlide {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Pesanan List ---------- */
+.pesanan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.pesanan-card {
+    display: block;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.15rem 1.25rem;
+    transition: all 0.25s;
+    cursor: pointer;
+}
+.pesanan-card:hover {
+    border-color: var(--border-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.pesanan-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+.pesanan-kode { font-weight: 700; font-size: 0.9rem; }
+
+.pesanan-card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+.pesanan-date { font-size: 0.8rem; color: var(--muted); }
+.pesanan-total { font-weight: 700; color: var(--accent-light); font-size: 0.95rem; }
+
+.pesanan-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    color: var(--dim);
+}
+.pesanan-card-footer i { font-size: 0.7rem; }
+
+/* ---------- Badge ---------- */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+.badge-success { background: var(--success-bg); color: #4ade80; border: 1px solid var(--success-border); }
+.badge-warning { background: var(--warning-bg); color: #facc15; border: 1px solid var(--warning-border); }
+.badge-danger { background: var(--danger-bg); color: #f87171; border: 1px solid var(--danger-border); }
+.badge-info { background: var(--info-bg); color: #60a5fa; border: 1px solid var(--info-border); }
+
+/* ---------- Detail Transaksi ---------- */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+.detail-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+}
+.detail-box-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.55rem 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid rgba(42, 42, 42, 0.5);
+    gap: 1rem;
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-row span:first-child { color: var(--muted); white-space: nowrap; }
+.detail-row span:last-child { text-align: right; font-weight: 500; }
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid rgba(42, 42, 42, 0.5);
+}
+.detail-item:last-child { border-bottom: none; }
+.detail-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ---------- Empty State ---------- */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--muted);
+}
+.empty-state i {
+    font-size: 3rem;
+    color: var(--dim);
+    margin-bottom: 1rem;
+    display: block;
+}
+.empty-state h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    color: var(--fg);
+}
+.empty-state p { font-size: 0.88rem; margin-bottom: 1.5rem; }
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--accent);
+    color: #fff;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.88rem;
+    border: none;
+    border-radius: 10px;
+    padding: 0.7rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+}
+.btn-primary:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 4px 20px var(--accent-glow);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: var(--fg);
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 1.25rem;
+    transition: all var(--transition);
+    cursor: pointer;
+    text-decoration: none;
+}
+.btn-secondary:hover {
+    border-color: var(--fg-muted);
+    background: var(--bg-elevated);
+}
+
+/* ---------- Pagination ---------- */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+.pagination a, .pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 0.4rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    margin: 0 2px;
+    transition: all 0.2s;
+}
+.pagination a:hover { border-color: var(--muted); color: var(--fg); }
+.pagination .active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 60px; left: 0; right: 0;
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        padding: 0.75rem;
+        gap: 0.2rem;
+    }
+    .nav-toggle { display: block; }
+    .detail-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+    .page-content { padding: 80px 1rem 2rem; }
+    .pesanan-card { padding: 1rem; }
+}
