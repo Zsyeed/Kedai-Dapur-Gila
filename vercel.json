@@ -17,7 +17,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/api/index.php"
+      "dest": "/resources/views/layouts/app.blade.php"
     }
   ]
 }
