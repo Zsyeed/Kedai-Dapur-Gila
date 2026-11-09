@@ -4,30 +4,27 @@
 
 @section('content')
 <div class="admin-card-header" style="margin-bottom:1.5rem;">
-    <div class="search-input" style="max-width:350px;">
-        <i class="fas fa-search"></i>
-        <form method="GET" action="{{ route('admin.transaksi.index') }}" style="display:flex;gap:0.5rem;">
+    <form method="GET" action="{{ route('admin.transaksi.index') }}" style="display:flex; gap:0.5rem; align-items:center;">
+        <div class="search-input-wrapper">
+            <i class="fas fa-search search-icon"></i>
             <input type="text"
                    name="cari"
                    value="{{ request('cari') }}"
                    placeholder="Cari kode transaksi..."
-                   class="form-input"
-                   style="padding-left:2.5rem;">
-
-            <select name="status" class="form-select form-select-sm" style="width:auto;">
-                <option value="">Semua Status</option>
-                <option value="menunggu" {{ request('status') === 'menunggu' ? 'selected' : '' }}>Menunggu</option>
-                <option value="diproses" {{ request('status') === 'diproses' ? 'selected' : '' }}>Diproses</option>
-                <option value="diantar" {{ request('status') === 'diantar' ? 'selected' : '' }}>Sedang Dikirim</option>
-                <option value="selesai" {{ request('status') === 'selesai' ? 'selected' : '' }}>Selesai</option>
-                <option value="dibatalkan" {{ request('status') === 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
-            </select>
-
-            <button type="submit" class="btn-sm btn-outline">
-                <i class="fas fa-filter"></i> Cari
-            </button>
-        </form>
-    </div>
+                   class="search-input">
+        </div>
+        <select name="status" class="form-select form-select-sm" style="width:auto;">
+            <option value="">Semua Status</option>
+            <option value="menunggu" {{ request('status') === 'menunggu' ? 'selected' : '' }}>Menunggu</option>
+            <option value="diproses" {{ request('status') === 'diproses' ? 'selected' : '' }}>Diproses</option>
+            <option value="diantar" {{ request('status') === 'diantar' ? 'selected' : '' }}>Sedang Dikirim</option>
+            <option value="selesai" {{ request('status') === 'selesai' ? 'selected' : '' }}>Selesai</option>
+            <option value="dibatalkan" {{ request('status') === 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+        </select>
+        <button type="submit" class="btn-sm btn-outline">
+            <i class="fas fa-filter"></i> Cari
+        </button>
+    </form>
 </div>
 
 <div class="admin-card">

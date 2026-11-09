@@ -45,7 +45,7 @@
 
 <!-- Pesanan Baru + Status -->
 <div class="admin-grid">
-    <div class="admin-card" style="grid-column: span 2;">
+    <div class="admin-card">
         <div class="admin-card-header">
             <h3 class="admin-card-title">Pesanan Terbaru</h3>
             <a href="{{ route('admin.transaksi.index') }}" class="btn-sm btn-outline">Lihat Semua</a>

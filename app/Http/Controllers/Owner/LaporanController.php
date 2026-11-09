@@ -31,14 +31,14 @@ class LaporanController extends Controller
                 ->whereYear('created_at', Carbon::now()->year);
         }
 
-        $laporan = $query->latest()->get();
+        $laporan = $query->oldest()->get();
 
         return view('owner.laporan.index', compact('laporan'));
     }
 
     public function exportPdf(Request $request)
     {
-        $laporan = Transaksi::where('status', 'selesai')->latest()->get();
+        $laporan = Transaksi::where('status', 'selesai')->oldest()->get();
         
         // Memuat view blade yang akan di-convert jadi PDF
         $pdf = Pdf::loadView('owner.laporan.pdf', compact('laporan'));

@@ -3,19 +3,21 @@
 @section('page-title', 'Kelola Produk')
 
 @section('content')
-<div class="admin-card-header" style="margin-bottom:1.5rem;">
-    <div class="search-input" style="max-width:300px;">
-        <i class="fas fa-search"></i>
-        <form method="GET" action="{{ route('admin.produk.index') }}" style="display:flex;gap:0.5rem;">
-            <input type="text" name="cari" value="{{ request('cari') }}" placeholder="Cari produk..." class="form-input" style="padding-left:2.5rem;">
-            <select name="status" class="form-select form-select-sm" style="width:auto;">
-                <option value="">Semua Status</option>
-                <option value="tersedia" {{ request('status') === 'tersedia' ? 'selected' : '' }}>Tersedia</option>
-                <option value="habis" {{ request('status') === 'habis' ? 'selected' : '' }}>Habis</option>
-            </select>
-            <button type="submit" class="btn-sm btn-outline"><i class="fas fa-filter"></i>Cari</button>
-        </form>
-    </div>
+<div class="admin-card-header" style="margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+    <form method="GET" action="{{ route('admin.produk.index') }}" style="display:flex; gap:0.5rem; align-items:center;">
+        <div class="search-input-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" name="cari" value="{{ request('cari') }}" placeholder="Cari produk..." class="search-input">
+        </div>
+        <select name="status" class="form-select form-select-sm" style="width:auto;">
+            <option value="">Semua Status</option>
+            <option value="tersedia" {{ request('status') === 'tersedia' ? 'selected' : '' }}>Tersedia</option>
+            <option value="habis" {{ request('status') === 'habis' ? 'selected' : '' }}>Habis</option>
+        </select>
+        <button type="submit" class="btn-sm btn-outline">
+            <i class="fas fa-filter"></i> Cari
+        </button>
+    </form>
     <a href="{{ route('admin.produk.create') }}" class="btn-primary btn-sm">
         <i class="fas fa-plus"></i> Tambah Produk
     </a>

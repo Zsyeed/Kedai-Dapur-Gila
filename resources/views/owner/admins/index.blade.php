@@ -3,15 +3,19 @@
 @section('page-title', 'Kelola Admin')
 
 @section('content') 
-<div class="admin-card-header" style="margin-bottom:1.5rem;">
-    <div class="search-input" style="max-width:300px;">
-        <i class="fas fa-search"></i>
-        <form method="GET" action="{{ route('owner.admins.index') }}" style="display:flex;gap:0.5rem;">
-            <input type="text" name="cari" value="{{ request('cari') }}" placeholder="Cari admin..." class="form-input" style="padding-left:2.5rem;">
-            <button type="submit" class="btn-sm btn-outline"><i class="fas fa-filter"></i>Cari</button>
-        </form>              
-    </div>
-        <a href="{{ route('owner.admins.create') }}" class="btn btn-primary">Tambah Admin</a>
+<div class="admin-card-header" style="margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+    <form method="GET" action="{{ route('owner.admins.index') }}" style="display:flex; gap:0.5rem; align-items:center;">
+        <div class="search-input-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" name="cari" value="{{ request('cari') }}" placeholder="Cari admin..." class="search-input">
+        </div>
+        <button type="submit" class="btn-sm btn-outline">
+            <i class="fas fa-filter"></i> Cari
+        </button>
+    </form>              
+    <a href="{{ route('owner.admins.create') }}" class="btn-primary btn-sm" style="display:inline-flex; align-items:center; gap:0.5rem;">
+        <i class="fas fa-plus"></i> Tambah Admin
+    </a>
 </div>
 
 <div class="admin-card">
@@ -22,26 +26,28 @@
                     <th>Nama</th>
                     <th>Email</th>
                     <th>No Telepon</th>
-                    <th>Aksi</th>
+                    <th style="width: 120px;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($admins as $admin)
                 <tr>
-                    <td>{{ $admin->nama }}</td>
+                    <td style="font-weight: 500;">{{ $admin->nama }}</td>
                     <td>{{ $admin->email }}</td>
                     <td>{{ $admin->no_telepon }}</td>
                     <td>
-                        <a href="{{ route('owner.admins.edit', $admin->id) }}" class="btn-sm btn-outline" style="margin-right:4px;" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <form action="{{ route('owner.admins.destroy', $admin->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin hapus admin ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger" title="Hapus">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
+                        <div style="display:flex; gap:6px;">
+                            <a href="{{ route('owner.admins.edit', $admin->id) }}" class="btn-sm btn-outline" title="Edit">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                            <form action="{{ route('owner.admins.destroy', $admin->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Yakin hapus admin ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-sm btn-danger" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @endforeach
