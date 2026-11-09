@@ -4,7 +4,6 @@
 
 @section('content')
 <style>
-    /* CSS Khusus Halaman SAW (Status & Ranking) */
     .badge-pill-status {
         padding: 0.5rem 1rem;
         border-radius: 9999px;
