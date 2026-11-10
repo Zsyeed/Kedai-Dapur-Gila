@@ -7,19 +7,24 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/contoh.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pelanggan.css') }}">
     @stack('styles')
 </head>
-<body class="bg-body text-white font-body">
+<body>
     
+    <!-- Notifikasi Sukses & Error dengan kelas .alert -->
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="alert alert-success" style="background: #10b981; color: white; padding: 1rem; text-align: center; font-weight: 600;">
+            <i class="fas fa-check-circle"></i> {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger" style="background: #ef4444; color: white; padding: 1rem; text-align: center; font-weight: 600;">
+            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
         </div>
     @endif
 
-    <!-- ==================== NAVIGASI ==================== -->
+    <!-- NAVIGASI -->
     <nav class="nav-main">
         <div class="nav-container">
             <a href="{{ route('beranda') }}" class="nav-brand">
@@ -35,7 +40,7 @@
             <div class="nav-actions">
                 @auth
                     @if(auth()->user()->isPelanggan())
-                        <a href="{{ route('pelanggan.keranjang') }}" class="btn-nav btn-outline" style="position:relative;">
+                        <a href="{{ route('pelanggan.keranjang') }}" class="btn-nav" style="position:relative;">
                             <i class="fas fa-shopping-bag"></i>
                             @php $totalKeranjang = auth()->user()->total_keranjang; @endphp
                             @if($totalKeranjang > 0)
@@ -45,10 +50,10 @@
                     @endif
 
                     <div class="nav-dropdown" id="navDropdown">
-                        <button class="btn-nav btn-outline" onclick="toggleDropdown()">
+                        <button class="btn-nav" onclick="toggleDropdown()">
                             <i class="fas fa-user-circle"></i>
                             <span class="hidden sm:inline">{{ auth()->user()->nama }}</span>
-                            <i class="fas fa-chevron-down" style="font-size:0.6rem;margin-left:0.15rem;"></i>
+                            <i class="fas fa-chevron-down" style="font-size:0.6rem;"></i>
                         </button>
                         <div class="dropdown-menu" id="dropdownMenu">
                             @if(auth()->user()->isPelanggan())
@@ -57,7 +62,7 @@
                             @endif
                             <form method="POST" action="{{ route('logout') }}" style="width:100%;">
                                 @csrf
-                                <button type="submit" class="dropdown-item" style="width:100%;text-align:left;color:#f87171;">
+                                <button type="submit" class="dropdown-item" style="color:#ef4444;">
                                     <i class="fas fa-sign-out-alt"></i> Keluar
                                 </button>
                             </form>
@@ -66,30 +71,18 @@
                 @endauth
 
                 <button class="nav-toggle" onclick="toggleNav()" aria-label="Toggle menu">
-                    <i class="fas fa-bars" id="navToggleIcon"></i>
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- ==================== KONTEN UTAMA ==================== -->
+    <!-- KONTEN UTAMA -->
     <main>
-        @if(session('success'))
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i> {{ session('success') }}
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-            </div>
-        @endif
-
         @yield('content')
     </main>
 
-    <!-- ==================== FOOTER ==================== -->
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-brand">
@@ -108,15 +101,53 @@
                 <h4>Kontak</h4>
                 <p><i class="fas fa-phone" style="width:16px;"></i> 0897-8525-539</p>
                 <p><i class="fas fa-envelope" style="width:16px;"></i> info@dapurgila.id</p>
-                <p><i class="fas fa-map-marker-alt" style="width:16px;"></i> Jl. Inpres V No.62 Kota Tangerang</p>
+                <p><i class="fas fa-map-marker-alt" style="width:16px;"></i> Jl. Inpres V No.62 Tangerang</p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 Ramen Dapur Gila. Semua hak dilindungi.</p>
+            <p>&copy; 2026 Ramen Dapur Gila. Semua hak dilindungi.</p>
         </div>
     </footer>
 
-    <script src="{{ asset('js/app.js') }}"></script>
+    <!-- SCRIPT DROPDOWN, MOBILE NAV, & AUTO-DISMISS NOTIFIKASI -->
+    <script>
+        function toggleDropdown() {
+            document.getElementById("dropdownMenu").classList.toggle("show");
+        }
+        function toggleNav() {
+            document.getElementById("navLinks").classList.toggle("show-nav");
+        }
+        window.onclick = function(event) {
+            if (!event.target.closest('.nav-dropdown')) {
+                var dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    if (dropdowns[i].classList.contains('show')) {
+                        dropdowns[i].classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        // Script untuk menghilangkan notifikasi secara otomatis setelah 3 detik
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+
+            alerts.forEach(function(alert) {
+                // Tunggu selama 1000 milidetik (1 detik)
+                setTimeout(function() {
+                    // Efek memudar perlahan (fade out)
+                    alert.style.transition = 'opacity 0.5s ease-out';
+                    alert.style.opacity = '0';
+
+                    // Sembunyikan elemen setelah animasi selesai (0.5 detik kemudian)
+                    setTimeout(function() {
+                        alert.style.display = 'none';
+                    }, 500);
+
+                }, 1000); 
+            });
+        });
+    </script>
     @stack('scripts')
 </body>
 </html>

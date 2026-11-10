@@ -3,377 +3,313 @@
 @section('title', 'Checkout')
 
 @section('content')
-<section class="section">
-    <div class="section-container" style="max-width:900px;">
-        <h2 class="section-title font-display" style="margin-bottom:2rem;">
-            <i class="fas fa-credit-card"></i> Checkout
+<section class="section bg-light" style="min-height: 80vh; padding-top: 3rem;">
+    <div class="section-container" style="max-width: 1000px;">
+        
+        <h2 class="section-title" style="margin-bottom: 2rem; font-size: 2rem;">
+            <i class="fas fa-credit-card" style="color: var(--accent); margin-right: 0.5rem;"></i> Checkout Pesanan
         </h2>
 
-        <form method="POST"
-              action="{{ route('pelanggan.checkout.proses') }}"
-              enctype="multipart/form-data"
-              id="checkoutForm">
+        <form method="POST" action="{{ route('pelanggan.checkout.proses') }}" enctype="multipart/form-data" id="checkoutForm">
             @csrf
 
             <div class="checkout-grid">
-                <div class="checkout-box">
-                    <h3 class="checkout-box-title">Ringkasan Pesanan</h3>
+                
+                <!-- KOLOM KIRI: Ringkasan Pesanan & Ongkir -->
+                <div>
+                    <div class="checkout-box">
+                        <h3 class="checkout-box-title">Ringkasan Pesanan</h3>
 
-                    <div class="checkout-items">
-                        @foreach($items as $item)
-                            <div class="checkout-item">
-                                <span>{{ $item->jumlah }}x {{ $item->produk->nama }}</span>
-                                <span>{{ $item->subtotal_formatted }}</span>
+                        <div class="checkout-items">
+                            @foreach($items as $item)
+                                <div class="checkout-item">
+                                    <span>{{ $item->jumlah }}x {{ $item->produk->nama }}</span>
+                                    <strong>{{ $item->subtotal_formatted }}</strong>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Rincian Biaya -->
+                        <div style="border-top: 1px solid #f3f4f6; padding-top: 1rem; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.95rem;">
+                            <div style="display: flex; justify-content: space-between; color: var(--text-muted);">
+                                <span>Subtotal Makanan</span>
+                                <span id="subtotalDisplay" data-subtotal="{{ $total }}">{{ 'Rp ' . number_format($total, 0, ',', '.') }}</span>
                             </div>
-                        @endforeach
-                    </div>
-
-                    <div class="checkout-total">
-                        <span>Total</span>
-                        <strong>{{ 'Rp ' . number_format($total, 0, ',', '.') }}</strong>
-                    </div>
-                </div>
-
-                <div class="checkout-box">
-                    <h3 class="checkout-box-title">Pengiriman</h3>
-
-                    <div class="form-group">
-                        <label for="alamat_pengiriman">Alamat Pengiriman</label>
-                        <textarea
-                            id="alamat_pengiriman"
-                            name="alamat_pengiriman"
-                            class="form-input"
-                            rows="3"
-                            required
-                            placeholder="Masukkan alamat lengkap pengiriman...">{{ old('alamat_pengiriman', $user->alamat ?? '') }}</textarea>
-
-                        @error('alamat_pengiriman')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="no_telepon">Nomor Telepon</label>
-                        <input type="text"
-                               id="no_telepon"
-                               name="no_telepon"
-                               class="form-input"
-                               value="{{ old('no_telepon', $user->no_telepon ?? '') }}"
-                               required
-                               placeholder="Masukkan nomor telepon...">
-
-                        @error('no_telepon')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label>Metode Pembayaran</label>
-
-                        <div class="payment-options">
-
-                            <label class="payment-option @error('metode_pembayaran') is-invalid @enderror">
-                                <input type="radio"
-                                       name="metode_pembayaran"
-                                       value="cod"
-                                       {{ old('metode_pembayaran', 'cod') === 'cod' ? 'checked' : '' }}
-                                       required>
-
-                                <div class="payment-option-content">
-                                    <i class="fas fa-hand-holding-dollar"></i>
-                                    <div>
-                                        <strong>COD</strong>
-                                        <p>Bayar di tempat</p>
-                                    </div>
-                                </div>
-                            </label>
-
-                            <label class="payment-option @error('metode_pembayaran') is-invalid @enderror">
-                                <input type="radio"
-                                       name="metode_pembayaran"
-                                       value="qris"
-                                       {{ old('metode_pembayaran') === 'qris' ? 'checked' : '' }}
-                                       required>
-
-                                <div class="payment-option-content">
-                                    <i class="fas fa-qrcode"></i>
-
-                                    <div>
-                                        <strong>Qris</strong>
-                                        <p>Bayar dengan QRIS</p>
-                                    </div>
-
-                                    <button type="button"
-                                            id="showQrisBtn"
-                                            class="btn-show-qris"
-                                            @if(old('metode_pembayaran') !== 'qris') style="display:none;" @endif>
-                                        <i class="fas fa-eye"></i> Lihat QR
-                                    </button>
-                                </div>
-                            </label>
-
-                            <label class="payment-option @error('metode_pembayaran') is-invalid @enderror">
-                                <input type="radio"
-                                    name="metode_pembayaran"
-                                    value="transfer"
-                                    {{ old('metode_pembayaran') === 'transfer' ? 'checked' : '' }}
-                                    required>
-
-                                <div class="payment-option-content">
-                                    <i class="fas fa-building-columns"></i>
-
-                                    <div>
-                                        <strong>Transfer Bank</strong>
-                                        <p>BCA / BNI / Mandiri</p>
-                                    </div>
-                                </div>
-
-                                <div id="bankSelection"
-                                    class="bank-selection"
-                                    @if(old('metode_pembayaran') !== 'transfer') style="display:none;" @endif>
-                                    <label for="bank">Pilih Bank</label>
-
-                                    <select name="bank" id="bank" class="form-input">
-                                        <option value="">-- Pilih Bank --</option>
-                                        <option value="bca" {{ old('bank') === 'bca' ? 'selected' : '' }}>BCA</option>
-                                        <option value="bni" {{ old('bank') === 'bni' ? 'selected' : '' }}>BNI</option>
-                                        <option value="mandiri" {{ old('bank') === 'mandiri' ? 'selected' : '' }}>Mandiri</option>
-                                    </select>
-
-                                    <div id="vaContainer"
-                                        class="va-container"
-                                        @if(old('bank')) style="display:none;" @endif>
-                                        <label>Nomor Virtual Account</label>
-
-                                        <div class="va-box">
-                                            <span id="nomorVA"></span>
-
-                                            <button type="button"
-                                                    class="copy-btn"
-                                                    onclick="copyVA()">
-                                                Salin
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
+                            <div style="display: flex; justify-content: space-between; color: var(--text-muted);">
+                                <span>Biaya Pengiriman (Ongkir)</span>
+                                <span id="ongkirDisplay">Rp 0</span>
+                            </div>
                         </div>
 
-                        @error('metode_pembayaran')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
+                        <!-- Input tersembunyi untuk dikirim ke Controller -->
+                        <input type="hidden" name="ongkir" id="inputOngkir" value="0">
+                        <input type="hidden" name="total_keseluruhan" id="inputTotalKeseluruhan" value="{{ $total }}">
 
-                    <div class="form-group" id="buktiPembayaranGroup" style="display:none;">
-                        <label for="bukti_pembayaran">Upload Bukti Pembayaran</label>
-
-                        <input type="file"
-                               id="bukti_pembayaran"
-                               name="bukti_pembayaran"
-                               class="form-input"
-                               accept="image/*,.pdf">
-
-                        <small style="display:block; margin-top:6px; color:#666;">
-                            Format JPG, PNG, JPEG, atau PDF. Maksimal 2 MB.
-                        </small>
-
-                        @error('bukti_pembayaran')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-
-                        <div id="previewContainer" style="display:none; margin-top:12px;">
-                            <img id="previewImage"
-                                 src=""
-                                 alt="Preview Bukti Pembayaran"
-                                 style="max-width:100%; max-height:250px; border-radius:8px; border:1px solid #ddd;">
+                        <div class="checkout-total" style="margin-top: 1rem;">
+                            <span>Total Pembayaran</span>
+                            <strong id="totalDisplay">{{ 'Rp ' . number_format($total, 0, ',', '.') }}</strong>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="catatan">Catatan</label>
-                        <textarea id="catatan"
-                                  name="catatan"
-                                  class="form-input"
-                                  rows="2"
-                                  placeholder="Contoh: level pedas extra, tidak pakai telur...">{{ old('catatan') }}</textarea>
-                    </div>
-
-                    <div class="checkout-actions" style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                        <button type="button" class="btn-secondary" id="btnBatalPesanan" style="flex: 1; padding: 12px; border: 1px solid #ccc; background: #fff; color: #333; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <!-- Tombol Batal / Kembali -->
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="button" class="btn-secondary btn-full" id="btnBatalPesanan" style="padding: 0.8rem; border-radius: 8px; cursor: pointer; border: 1px solid #d1d5db; font-weight: 600;">
                             <i class="fas fa-times"></i> Batal Pesanan
                         </button>
-                        <button type="submit" class="btn-primary" style="flex: 2; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                            Buat Pesanan <i class="fas fa-check"></i>
+                    </div>
+                </div>
+
+                <!-- KOLOM KANAN: Pengiriman & Pembayaran -->
+                <div>
+                    <div class="checkout-box">
+                        <h3 class="checkout-box-title">Informasi Pengiriman & Pembayaran</h3>
+
+                        <!-- Pilihan Wilayah / Ongkir (Tangerang & Jakarta) -->
+                        <div class="form-group" style="margin-bottom: 1.25rem;">
+                            <label for="wilayah" style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">Wilayah Pengiriman (Dari Ciledug)</label>
+                            <select name="wilayah" id="wilayah" class="form-input" required style="width:100%; padding:0.75rem; border:1px solid #d1d5db; border-radius:8px; outline:none; background:#fff;">
+                                <option value="" data-ongkir="0">-- Pilih Wilayah Tujuan --</option>
+                                
+                                <!-- KOTA / KABUPATEN TANGERANG -->
+                                <optgroup label="Tangerang">
+                                    <option value="tangerang_terdekat" data-ongkir="10000">Ciledug & Sekitarnya (Karang Tengah / Larangan) (Rp 10.000)</option>
+                                    <option value="tangerang_tengah" data-ongkir="15000">Tangerang Pusat / Karawaci / Cikokol / Ciputat (Rp 15.000)</option>
+                                    <option value="tangerang_terjauh" data-ongkir="20000">BSD / Gading Serpong / Alam Sutera / Bintaro (Rp 20.000)</option>
+                                </optgroup>
+
+                                <!-- DKI JAKARTA -->
+                                <optgroup label="Jakarta">
+                                    <option value="jakarta_terdekat" data-ongkir="12000">Jakarta Barat Terdekat (Meruya / Joglo / Petukangan) (Rp 12.000)</option>
+                                    <option value="jakarta_menengah" data-ongkir="18000">Jakarta Barat Lainnya (Cengkareng / Kebon Jeruk / Kembangan) (Rp 18.000)</option>
+                                    <option value="jakarta_terjauh" data-ongkir="25000">Jakarta Pusat / Jakarta Selatan (Menteng / Senayan) (Rp 25.000)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <!-- Alamat Lengkap -->
+                        <div class="form-group" style="margin-bottom: 1.25rem;">
+                            <label for="alamat_pengiriman" style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">Detail Alamat / Patokan</label>
+                            <textarea id="alamat_pengiriman" name="alamat_pengiriman" class="form-input auto-resize" rows="2" required placeholder="Contoh: Jl. Inpres V No.62, RT 01/02...">{{ old('alamat_pengiriman', $user->alamat ?? '') }}</textarea>
+                            @error('alamat_pengiriman')
+                                <span class="form-error" style="color:#ef4444; font-size:0.8rem;">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- No Telepon -->
+                        <div class="form-group" style="margin-bottom: 1.25rem;">
+                            <label for="no_telepon" style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">Nomor Telepon</label>
+                            <input type="text" id="no_telepon" name="no_telepon" class="form-input" value="{{ old('no_telepon', $user->no_telepon ?? '') }}" required placeholder="Contoh: 081234567890" style="width:100%; padding:0.75rem; border:1px solid #d1d5db; border-radius:8px; outline:none;">
+                            @error('no_telepon')
+                                <span class="form-error" style="color:#ef4444; font-size:0.8rem;">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Metode Pembayaran -->
+                        <div class="form-group" style="margin-bottom: 1.25rem;">
+                            <label style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">Metode Pembayaran</label>
+
+                            <div class="payment-options">
+                                
+                                <!-- COD -->
+                                <label class="payment-option">
+                                    <div class="payment-option-content">
+                                        <input type="radio" name="metode_pembayaran" value="cod" {{ old('metode_pembayaran', 'cod') === 'cod' ? 'checked' : '' }} required>
+                                        <i class="fas fa-hand-holding-dollar"></i>
+                                        <div>
+                                            <strong>COD</strong>
+                                            <p>Bayar langsung di tempat saat pesanan tiba</p>
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <!-- QRIS -->
+                                <label class="payment-option">
+                                    <div class="payment-option-content">
+                                        <input type="radio" name="metode_pembayaran" value="qris" {{ old('metode_pembayaran') === 'qris' ? 'checked' : '' }} required>
+                                        <i class="fas fa-qrcode"></i>
+                                        <div>
+                                            <strong>QRIS</strong>
+                                            <p>Scan kode QR untuk pembayaran instan</p>
+                                        </div>
+                                        <button type="button" id="showQrisBtn" class="btn-show-qris" @if(old('metode_pembayaran') !== 'qris') style="display:none;" @endif>
+                                            <i class="fas fa-eye"></i> Lihat QR
+                                        </button>
+                                    </div>
+                                </label>
+
+                                <!-- Transfer Bank -->
+                                <label class="payment-option">
+                                    <div class="payment-option-content" style="flex-wrap: wrap;">
+                                        <div style="display: flex; align-items: center; gap: 1rem; width: 100%;">
+                                            <input type="radio" name="metode_pembayaran" value="transfer" {{ old('metode_pembayaran') === 'transfer' ? 'checked' : '' }} required>
+                                            <i class="fas fa-building-columns"></i>
+                                            <div>
+                                                <strong>Transfer Bank</strong>
+                                                <p>Virtual Account (BCA, BNI, Mandiri)</p>
+                                            </div>
+                                        </div>
+
+                                        <div id="bankSelection" class="bank-selection" style="width: 100%; @if(old('metode_pembayaran') !== 'transfer') display:none; @endif">
+                                            <label for="bank" style="font-size:0.85rem; margin-bottom:0.25rem;">Pilih Bank Tujuan</label>
+                                            <select name="bank" id="bank" class="form-input" style="width:100%; padding:0.6rem; border:1px solid #d1d5db; border-radius:6px;">
+                                                <option value="">-- Pilih Bank --</option>
+                                                <option value="bca" {{ old('bank') === 'bca' ? 'selected' : '' }}>BCA</option>
+                                                <option value="bni" {{ old('bank') === 'bni' ? 'selected' : '' }}>BNI</option>
+                                                <option value="mandiri" {{ old('bank') === 'mandiri' ? 'selected' : '' }}>Mandiri</option>
+                                            </select>
+
+                                            <div id="vaContainer" class="va-container" style="margin-top:0.75rem; @if(old('bank')) display:block; @else display:none; @endif">
+                                                <span style="font-size:0.8rem; color:var(--text-muted);">Nomor Virtual Account:</span>
+                                                <div class="va-box">
+                                                    <span id="nomorVA"></span>
+                                                    <button type="button" class="copy-btn" onclick="copyVA()">Salin</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
+
+                            </div>
+                        </div>
+
+                        <!-- Upload Bukti Pembayaran -->
+                        <div class="form-group" id="buktiPembayaranGroup" style="margin-bottom: 1.25rem; @if(!in_array(old('metode_pembayaran'), ['qris', 'transfer'])) display:none; @endif">
+                            <label for="bukti_pembayaran" style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">Upload Bukti Pembayaran</label>
+                            <input type="file" id="bukti_pembayaran" name="bukti_pembayaran" class="form-input" accept="image/*,.pdf" style="width:100%; padding:0.5rem; border:1px solid #d1d5db; border-radius:8px;">
+                            <small style="display:block; margin-top:4px; color:var(--text-muted); font-size:0.75rem;">Format JPG, PNG, atau PDF. Maksimal 2 MB.</small>
+                            
+                            <div id="previewContainer" style="display:none; margin-top:10px;">
+                                <img id="previewImage" src="" alt="Preview Bukti" style="max-width:150px; border-radius:6px; border:1px solid #ddd;">
+                            </div>
+                        </div>
+
+                        <!-- Catatan -->
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label for="catatan" style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">Catatan Pesanan (Opsional)</label>
+                            <textarea id="catatan" name="catatan" class="form-input auto-resize" rows="2" placeholder="Contoh: Level pedas 3, kuah dipisah...">{{ old('catatan') }}</textarea>
+                        </div>
+
+                        <!-- Tombol Submit -->
+                        <button type="submit" class="btn-red btn-full" style="justify-content: center; padding: 0.9rem; font-size: 1rem; border-radius: 8px;">
+                            Buat Pesanan Sekarang <i class="fas fa-check-circle"></i>
                         </button>
                     </div>
                 </div>
+
             </div>
         </form>
     </div>
 </section>
 
+<!-- Form Tersembunyi untuk Batal Pesanan -->
 <form id="batalPesananForm" action="{{ route('pelanggan.keranjang.kosongkan') }}" method="POST" style="display: none;">
     @csrf
 </form>
 
-<div id="qrisModal"
-     style="display:none;
-            position:fixed;
-            inset:0;
-            background:rgba(0,0,0,0.6);
-            z-index:9999;
-            justify-content:center;
-            align-items:center;">
-
-    <div style="background:#fff;
-                padding:24px;
-                border-radius:16px;
-                max-width:400px;
-                width:90%;
-                text-align:center;
-                position:relative;">
-
-        <button type="button"
-                id="closeQrisModal"
-                style="position:absolute;
-                       top:10px;
-                       right:15px;
-                       border:none;
-                       background:none;
-                       font-size:28px;
-                       cursor:pointer;">
-            &times;
-        </button>
-
-        <h3 style="margin-bottom:16px;">QRIS Pembayaran</h3>
-
-        <img src="{{ asset('images/qris.jpg') }}"
-             alt="QRIS"
-             style="width:250px; max-width:100%; margin:auto;">
-
-        <p style="font-size:14px; color:#666;">
-            Scan QR Code ini untuk melakukan pembayaran.
-        </p>
+<!-- Modal QRIS -->
+<div id="qrisModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:#fff; padding:2rem; border-radius:16px; max-width:360px; width:90%; text-align:center; position:relative;">
+        <button type="button" id="closeQrisModal" style="position:absolute; top:10px; right:15px; border:none; background:none; font-size:24px; cursor:pointer;">&times;</button>
+        <h3 style="margin-bottom:1rem; font-size:1.25rem; font-weight:800;">Scan QRIS Pembayaran</h3>
+        <img src="{{ asset('images/qris.jpg') }}" alt="QRIS" style="width:100%; max-width:220px; margin:0 auto 1rem auto; border-radius:8px;">
+        <p style="font-size:0.85rem; color:var(--text-muted);">Gunakan aplikasi e-wallet atau m-banking apa saja untuk memindai kode QR di atas.</p>
     </div>
 </div>
 
 <style>
-/* Tombol Lihat QR */
-.btn-show-qris {
-    margin-left: auto;
-    padding: 8px 12px;
-    border: none;
+textarea.auto-resize {
+    resize: none;
+    overflow: hidden;
+    min-height: 80px;
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
     border-radius: 8px;
-    background: #e53935;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
-    white-space: nowrap;
+    outline: none;
+    font-family: inherit;
+    font-size: 0.95rem;
 }
-
-.btn-show-qris:hover {
-    background: #c62828;
-}
-
-/* Payment content */
-.payment-option-content {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.bank-selection {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-}
-
-.bank-selection label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-}
-
-.va-container {
-    margin-top: 1rem;
-}
-
-.va-box {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f8f9fa;
-    border: 1px dashed #d32f2f;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-weight: 700;
-    color: #d32f2f;
-    gap: 1rem;
-}
-
-.copy-btn {
-    border: none;
-    background: #d32f2f;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.copy-btn:hover {
-    background: #b71c1c;
+textarea.auto-resize:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 </style>
+@endsection
 
+@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const paymentRadios = document.querySelectorAll('input[name="metode_pembayaran"]');
-    const qrisRadio = document.querySelector('input[value="qris"]');
-    const transferRadio = document.querySelector('input[value="transfer"]');
+    const wilayahSelect = document.getElementById('wilayah');
+    const subtotalDisplay = document.getElementById('subtotalDisplay');
+    const ongkirDisplay = document.getElementById('ongkirDisplay');
+    const totalDisplay = document.getElementById('totalDisplay');
+    const inputOngkir = document.getElementById('inputOngkir');
+    const inputTotalKeseluruhan = document.getElementById('inputTotalKeseluruhan');
 
+    const subtotalValue = parseFloat(subtotalDisplay.getAttribute('data-subtotal')) || 0;
+
+    function formatRupiah(angka) {
+        return 'Rp ' + angka.toLocaleString('id-ID');
+    }
+
+    if (wilayahSelect) {
+        wilayahSelect.addEventListener('change', function () {
+            const selectedOption = this.options[this.selectedIndex];
+            const ongkir = parseFloat(selectedOption.getAttribute('data-ongkir')) || 0;
+            const totalKeseluruhan = subtotalValue + ongkir;
+
+            ongkirDisplay.textContent = formatRupiah(ongkir);
+            totalDisplay.textContent = formatRupiah(totalKeseluruhan);
+
+            inputOngkir.value = ongkir;
+            inputTotalKeseluruhan.value = totalKeseluruhan;
+        });
+    }
+
+    // Auto-resize Textarea
+    const autoResizeTextareas = document.querySelectorAll('textarea.auto-resize');
+    autoResizeTextareas.forEach(textarea => {
+        adjustHeight(textarea);
+        textarea.addEventListener('input', function () { adjustHeight(this); });
+    });
+    function adjustHeight(el) {
+        el.style.height = 'auto';
+        el.style.height = (el.scrollHeight) + 'px';
+    }
+
+    // Metode Pembayaran & Logika Lainnya
+    const paymentRadios = document.querySelectorAll('input[name="metode_pembayaran"]');
     const showQrisBtn = document.getElementById('showQrisBtn');
     const qrisModal = document.getElementById('qrisModal');
     const closeQrisModal = document.getElementById('closeQrisModal');
-
     const buktiGroup = document.getElementById('buktiPembayaranGroup');
     const buktiInput = document.getElementById('bukti_pembayaran');
     const previewContainer = document.getElementById('previewContainer');
     const previewImage = document.getElementById('previewImage');
-
     const bankSelection = document.getElementById('bankSelection');
     const bankSelect = document.getElementById('bank');
     const vaContainer = document.getElementById('vaContainer');
     const nomorVA = document.getElementById('nomorVA');
-
     const btnBatalPesanan = document.getElementById('btnBatalPesanan');
     const batalPesananForm = document.getElementById('batalPesananForm');
 
-    // Logic Tombol Batal Pesanan dengan Konfirmasi Pop-up
     if (btnBatalPesanan && batalPesananForm) {
         btnBatalPesanan.addEventListener('click', function(e) {
             e.preventDefault();
-            const yakin = confirm("Apakah Anda yakin ingin membatalkan pesanan? Tindakan ini akan mengosongkan semua item di keranjang Anda.");
-            if (yakin) {
+            if (confirm("Yakin ingin membatalkan pesanan? Keranjang belanja Anda akan dikosongkan.")) {
                 batalPesananForm.submit();
             }
         });
     }
 
-    // Tampilkan tombol QR dan upload bukti
     function togglePaymentFields() {
         const selected = document.querySelector('input[name="metode_pembayaran"]:checked');
-
-        // Tombol Lihat QR hanya untuk QRIS
         if (selected && selected.value === 'qris') {
             showQrisBtn.style.display = 'inline-flex';
         } else {
             showQrisBtn.style.display = 'none';
         }
 
-        // Upload bukti untuk QRIS dan Transfer
         if (selected && (selected.value === 'qris' || selected.value === 'transfer')) {
             buktiGroup.style.display = 'block';
             buktiInput.setAttribute('required', 'required');
@@ -382,128 +318,67 @@ document.addEventListener('DOMContentLoaded', function () {
             buktiInput.removeAttribute('required');
             buktiInput.value = '';
             previewContainer.style.display = 'none';
-            previewImage.src = '';
         }
 
-        // Handle Tampilan Pilihan Bank
         if (selected && selected.value === 'transfer') {
             bankSelection.style.display = 'block';
         } else {
             bankSelection.style.display = 'none';
             vaContainer.style.display = 'none';
-            nomorVA.textContent = '';
             if(bankSelect) bankSelect.value = '';
         }
     }
 
-    paymentRadios.forEach(radio => {
-        radio.addEventListener('change', togglePaymentFields);
-    });
-
+    paymentRadios.forEach(radio => { radio.addEventListener('change', togglePaymentFields); });
     togglePaymentFields();
 
-    // Buka modal QR
     if (showQrisBtn) {
-        showQrisBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            qrisModal.style.display = 'flex';
-        });
+        showQrisBtn.addEventListener('click', function (e) { e.preventDefault(); qrisModal.style.display = 'flex'; });
     }
-
-    // Tutup modal
     if (closeQrisModal) {
-        closeQrisModal.addEventListener('click', function () {
-            qrisModal.style.display = 'none';
-        });
+        closeQrisModal.addEventListener('click', function () { qrisModal.style.display = 'none'; });
     }
+    qrisModal.addEventListener('click', function (e) { if (e.target === qrisModal) qrisModal.style.display = 'none'; });
 
-    // Klik di luar modal
-    qrisModal.addEventListener('click', function (e) {
-        if (e.target === qrisModal) {
-            qrisModal.style.display = 'none';
-        }
-    });
-
-    // Preview bukti pembayaran
     buktiInput.addEventListener('change', function () {
         const file = this.files[0];
-
-        if (!file) {
-            previewContainer.style.display = 'none';
-            previewImage.src = '';
-            return;
-        }
-
-        if (file.type.startsWith('image/')) {
+        if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
-
             reader.onload = function (e) {
                 previewImage.src = e.target.result;
                 previewContainer.style.display = 'block';
             };
-
             reader.readAsDataURL(file);
         } else {
             previewContainer.style.display = 'none';
-            previewImage.src = '';
         }
     });
 
-    // Generate nomor VA berdasarkan bank
     function generateVA(bank) {
-        const prefixes = {
-            bca: '014',
-            bni: '009',
-            mandiri: '008'
-        };
-
-        if (!prefixes[bank]) {
-            return '';
-        }
-
-        const timestamp = Date.now().toString().slice(-10);
-        const random = Math.floor(Math.random() * 900 + 100);
-
-        return prefixes[bank] + timestamp + random;
+        const prefixes = { bca: '014', bni: '009', mandiri: '008' };
+        if (!prefixes[bank]) return '';
+        return prefixes[bank] + Date.now().toString().slice(-10) + Math.floor(Math.random() * 900 + 100);
     }
 
-    // Update nomor VA saat bank dipilih
     function updateVA() {
         const bank = bankSelect.value;
-
         if (!bank) {
             vaContainer.style.display = 'none';
             nomorVA.textContent = '';
             return;
         }
-
-        const va = generateVA(bank);
-
-        nomorVA.textContent = va;
+        nomorVA.textContent = generateVA(bank);
         vaContainer.style.display = 'block';
     }
 
-    // Copy nomor VA
     window.copyVA = function () {
         const va = nomorVA.textContent;
-
         if (!va) return;
-
-        navigator.clipboard.writeText(va).then(() => {
-            alert('Nomor VA berhasil disalin!');
-        });
+        navigator.clipboard.writeText(va).then(() => alert('Nomor Virtual Account berhasil disalin!'));
     };
 
-    // Event dropdown bank
-    if (bankSelect) {
-        bankSelect.addEventListener('change', updateVA);
-    }
-
-    // Jika ada old value bank, tampilkan nomor VA
-    if (bankSelect && bankSelect.value) {
-        updateVA();
-    }
+    if (bankSelect) { bankSelect.addEventListener('change', updateVA); }
+    if (bankSelect && bankSelect.value) { updateVA(); }
 });
 </script>
-@endsection
+@endpush
