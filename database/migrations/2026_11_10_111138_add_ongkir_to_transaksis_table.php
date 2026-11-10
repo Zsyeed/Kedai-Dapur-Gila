@@ -9,10 +9,11 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('transaksis', function (Blueprint $table) {
-            $table->decimal('ongkir', 10, 2)->default(0)->after('total_harga'); // sesuaikan posisi
+        // Ubah dari 'transaksis' menjadi 'transaksi' (sesuai nama tabel asli Anda)
+        Schema::table('transaksi', function (Blueprint $table) {
+            $table->decimal('ongkir', 10, 2)->default(0)->after('total_harga');
         });
     }
 
@@ -21,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('transaksis', function (Blueprint $table) {
-            //
+        Schema::table('transaksi', function (Blueprint $table) {
+            $table->dropColumn('ongkir');
         });
     }
 };

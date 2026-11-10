@@ -15,9 +15,10 @@ class Transaksi extends Model
         'user_id',
         'kode_transaksi',
         'total_harga',
+        'ongkir',
         'status',
         'metode_pembayaran',
-        'nomor_va',           
+        'nomor_va',          
         'alamat_pengiriman',
         'no_telepon',     
         'catatan',
@@ -28,6 +29,7 @@ class Transaksi extends Model
     {
         return [
             'total_harga' => 'integer',
+            'ongkir'      => 'integer', // <--- TAMBAHKAN INI AGAR FORMAT ANGKA AMAN
         ];
     }
 
@@ -48,6 +50,12 @@ class Transaksi extends Model
     public function getTotalHargaFormattedAttribute(): string
     {
         return 'Rp ' . number_format($this->total_harga, 0, ',', '.');
+    }
+
+    // Tambahan accessor opsional untuk format rupiah ongkir
+    public function getOngkirFormattedAttribute(): string
+    {
+        return 'Rp ' . number_format($this->ongkir, 0, ',', '.');
     }
 
     public function getStatusLabelAttribute(): string
@@ -86,11 +94,6 @@ class Transaksi extends Model
 
     /**
      * Generate nomor Virtual Account unik.
-     *
-     * Contoh:
-     * BCA     : 014xxxxxxxxxxxx
-     * BNI     : 009xxxxxxxxxxxx
-     * Mandiri : 008xxxxxxxxxxxx
      */
     public static function generateNomorVA(string $bank = 'bca'): string
     {
@@ -102,8 +105,6 @@ class Transaksi extends Model
         };
 
         do {
-            // Contoh hasil:
-            // 014202605192051123
             $nomorVA = $prefix
                 . now()->format('YmdHis')
                 . random_int(100, 999);

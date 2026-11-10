@@ -29,17 +29,22 @@ class TransaksiService
         }
 
         return DB::transaction(function () use ($items, $data) {
-            $totalHarga = $items->sum(function ($item) {
+            // Hitung subtotal harga makanan dari keranjang dengan benar
+            $subtotalMakanan = $items->sum(function ($item) {
                 return $item->produk->harga * $item->jumlah;
             });
+
+            // Ambil nilai ongkir dari data request (default 0 jika tidak ada)
+            $ongkir = isset($data['ongkir']) ? (float) $data['ongkir'] : 0;
+
+            // Total keseluruhan = Subtotal Makanan + Ongkir
+            $totalHarga = isset($data['total_harga']) ? (float) $data['total_harga'] : ($subtotalMakanan + $ongkir);
 
             /*
             |--------------------------------------------------------------------------
             | Generate Nomor Virtual Account
             |--------------------------------------------------------------------------
             | Hanya dibuat jika metode pembayaran = transfer.
-            | Bisa ditambahkan pilihan bank di form, misalnya:
-            | $data['bank'] = bca / bni / mandiri
             |--------------------------------------------------------------------------
             */
             $nomorVA = null;
@@ -49,13 +54,15 @@ class TransaksiService
                 $nomorVA = Transaksi::generateNomorVA($bank);
             }
 
+            // Simpan Transaksi ke Database (Termasuk Ongkir)
             $transaksi = Transaksi::create([
                 'user_id'           => Auth::id(),
                 'kode_transaksi'    => Transaksi::generateKode(),
                 'total_harga'       => $totalHarga,
+                'ongkir'            => $ongkir, // <--- Menyimpan biaya pengiriman ke database
                 'status'            => 'menunggu',
                 'metode_pembayaran' => $data['metode_pembayaran'],
-                'nomor_va'          => $nomorVA, // simpan nomor VA
+                'nomor_va'          => $nomorVA,
                 'alamat_pengiriman' => $data['alamat_pengiriman'],
                 'no_telepon'        => $data['no_telepon'],
                 'catatan'           => $data['catatan'] ?? null,
@@ -63,14 +70,14 @@ class TransaksiService
             ]);
 
             foreach ($items as $item) {
-                $subtotal = $item->produk->harga * $item->jumlah;
+                $subtotalItem = $item->produk->harga * $item->jumlah;
 
                 DetailTransaksi::create([
                     'transaksi_id' => $transaksi->id,
                     'produk_id'    => $item->produk_id,
                     'jumlah'       => $item->jumlah,
                     'harga_satuan' => $item->produk->harga,
-                    'subtotal'     => $subtotal,
+                    'subtotal'     => $subtotalItem,
                 ]);
 
                 // Kurangi stok produk
@@ -134,17 +141,17 @@ class TransaksiService
         $today = now()->toDateString();
 
         return [
-            'total_pendapatan' => Transaksi::where('status', 'selesai')->sum('total_harga'),
+            'total_pendapatan'    => Transaksi::where('status', 'selesai')->sum('total_harga'),
             'pendapatan_hari_ini' => Transaksi::where('status', 'selesai')
                 ->whereDate('created_at', $today)
                 ->sum('total_harga'),
-            'total_pesanan' => Transaksi::count(),
-            'pesanan_hari_ini' => Transaksi::whereDate('created_at', $today)->count(),
-            'menunggu'  => Transaksi::where('status', 'menunggu')->count(),
-            'diproses'  => Transaksi::where('status', 'diproses')->count(),
-            'diantar'   => Transaksi::where('status', 'diantar')->count(),
-            'selesai'   => Transaksi::where('status', 'selesai')->count(),
-            'dibatalkan' => Transaksi::where('status', 'dibatalkan')->count(),
+            'total_pesanan'       => Transaksi::count(),
+            'pesanan_hari_ini'    => Transaksi::whereDate('created_at', $today)->count(),
+            'menunggu'            => Transaksi::where('status', 'menunggu')->count(),
+            'diproses'            => Transaksi::where('status', 'diproses')->count(),
+            'diantar'             => Transaksi::where('status', 'diantar')->count(),
+            'selesai'             => Transaksi::where('status', 'selesai')->count(),
+            'dibatalkan'          => Transaksi::where('status', 'dibatalkan')->count(),
         ];
     }
 

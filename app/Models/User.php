@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute; // <-- Tambahkan ini
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -81,6 +82,16 @@ class User extends Authenticatable
 
         // Hasil akhir: ADM001, OWN001, PLG001
         return $prefix . str_pad($number, 3, '0', STR_PAD_LEFT);
+    }
+
+    /* ---------- Accessor untuk Nama (Auto Huruf Besar di Awal Kata) ---------- */
+
+    protected function nama(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => ucwords(strtolower($value)),
+            set: fn ($value) => ucwords(strtolower($value)),
+        );
     }
 
     /* ---------- Relasi ---------- */

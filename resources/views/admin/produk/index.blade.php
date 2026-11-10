@@ -9,7 +9,7 @@
             <i class="fas fa-search search-icon"></i>
             <input type="text" name="cari" value="{{ request('cari') }}" placeholder="Cari produk..." class="search-input">
         </div>
-        <select name="status" class="form-select form-select-sm" style="width:auto;">
+        <select name="status" class="form-select form-select-sm status-select">
             <option value="">Semua Status</option>
             <option value="tersedia" {{ request('status') === 'tersedia' ? 'selected' : '' }}>Tersedia</option>
             <option value="habis" {{ request('status') === 'habis' ? 'selected' : '' }}>Habis</option>

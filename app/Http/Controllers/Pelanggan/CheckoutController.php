@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CheckoutRequest;
 use App\Services\KeranjangService;
 use App\Services\TransaksiService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CheckoutController extends Controller
@@ -34,20 +35,27 @@ class CheckoutController extends Controller
     public function proses(CheckoutRequest $request)
     {
         try {
-            // Ambil data validasi
+            // Ambil data dari form request yang sudah tervalidasi
             $data = $request->validated();
 
-            // Upload bukti pembayaran jika ada
+            // Tangkap data ongkir dan total keseluruhan (makanan + ongkir) dari form
+            $data['ongkir'] = $request->input('ongkir', 0);
+            
+            if ($request->has('total_keseluruhan')) {
+                $data['total_harga'] = $request->input('total_keseluruhan');
+            }
+
+            // Upload bukti pembayaran jika ada (untuk metode QRIS / Transfer Bank)
             if ($request->hasFile('bukti_pembayaran')) {
                 $data['bukti_pembayaran'] = $request
                     ->file('bukti_pembayaran')
                     ->store('bukti-pembayaran', 'public');
             }
 
-            // Proses checkout
+            // Proses penyimpanan transaksi melalui TransaksiService
             $transaksi = $this->transaksiService->checkout($data);
 
-            // Redirect ke halaman pesanan
+            // Redirect ke halaman daftar pesanan dengan pesan sukses
             return redirect()
                 ->route('pelanggan.pesanan')
                 ->with(
@@ -58,7 +66,7 @@ class CheckoutController extends Controller
         } catch (\Exception $e) {
             return back()
                 ->withInput()
-                ->with('error', $e->getMessage());
+                ->with('error', 'Terjadi kesalahan saat memproses pesanan: ' . $e->getMessage());
         }
     }
 
@@ -68,18 +76,16 @@ class CheckoutController extends Controller
     public function batal()
     {
         try {
-            // Panggil method pengosongan keranjang dari KeranjangService
-            // Catatan: Pastikan nama method di service Anda sesuai (misal: kosongkan(), clear(), atau destroy())
+            // Cek nama method yang tersedia di KeranjangService Anda
             if (method_exists($this->keranjangService, 'kosongkan')) {
                 $this->keranjangService->kosongkan();
             } else {
-                // Jika nama method di service Anda adalah clear()
                 $this->keranjangService->clear(); 
             }
 
             return redirect()
                 ->route('pelanggan.menu')
-                ->with('success', 'Pesanan berhasil dibatalkan dan keranjang telah dikosongkan.');
+                ->with('success', 'Pesanan dibatalkan dan keranjang telah dikosongkan.');
 
         } catch (\Exception $e) {
             return redirect()

@@ -507,3 +507,59 @@ body {
     background-color: #f1f5f9;
     color: #475569;
 }
+
+/* =======================================
+   KUSTOMISASI TOMBOL PANAH PAGINATION
+   ======================================= */
+.pagination-arrows-only {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.pagination-arrows-only .page-btn {
+    min-width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+    color: #374151;
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    line-height: 1;
+}
+
+.pagination-arrows-only a.page-btn:hover {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: var(--accent, #dc2626);
+}
+
+.pagination-arrows-only .page-btn.disabled {
+    background: #f9fafb;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+    box-shadow: none;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.status-select {
+    height: 30px; /* Disamakan dengan tinggi kotak search */
+    padding: 0 35px 0 16px; /* Padding kiri ditambah agar teks tidak terlalu pinggir */
+    font-size: 0.9rem;
+    font-family: inherit;
+    border: 1px solid #d1d5db;
+    border-radius: 8px; /* Sudut lengkung disamakan */
+    background-color: #ffffff;
+    color: #374151;
+    outline: none;
+    cursor: pointer;
+}

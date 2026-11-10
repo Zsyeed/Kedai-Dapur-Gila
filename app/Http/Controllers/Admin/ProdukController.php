@@ -48,8 +48,8 @@ class ProdukController extends Controller
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
             $nama = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/ramen'), $nama);
-            $data['gambar'] = 'images/ramen/' . $nama;
+            $file->move(public_path('images/makanan'), $nama); // Disarankan sesuaikan folder jika perlu, atau tetap di 'images/ramen'
+            $data['gambar'] = 'images/makanan/' . $nama;
         }
 
         Produk::create($data);
@@ -84,8 +84,8 @@ class ProdukController extends Controller
 
             $file = $request->file('gambar');
             $nama = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/ramen'), $nama);
-            $data['gambar'] = 'images/ramen/' . $nama;
+            $file->move(public_path('images/makanan'), $nama);
+            $data['gambar'] = 'images/makanan/' . $nama;
         }
 
         $produk->update($data);

@@ -41,20 +41,20 @@
                                     {{ $detail->jumlah }}x {{ $detail->produk->nama }}
                                 </strong>
                                 <span style="font-size: 0.8rem; color: var(--text-muted);">
-                                    {{ $detail->produk->harga_formatted }} / porsi
+                                    {{ 'Rp ' . number_format($detail->harga_satuan, 0, ',', '.') }} / porsi
                                 </span>
                             </div>
                             <span style="font-weight: 700; color: var(--text-main);">
-                                {{ $detail->subtotal_formatted }}
+                                {{ 'Rp ' . number_format($detail->subtotal, 0, ',', '.') }}
                             </span>
                         </div>
                     @endforeach
 
-                    <!-- Rincian Subtotal, Ongkir & Total -->
+                    <!-- Rincian Subtotal Makanan, Ongkir & Total -->
                     <div style="border-top: 1px solid #f3f4f6; padding-top: 1rem; margin-top: 1rem;">
                         <div class="detail-summary-row">
                             <span>Subtotal Makanan</span>
-                            <span>{{ 'Rp ' . number_format($transaksi->detailTransaksi->sum(function($item) { return $item->jumlah * $item->harga; }), 0, ',', '.') }}</span>
+                            <span>{{ 'Rp ' . number_format($transaksi->detailTransaksi->sum(function($item) { return $item->jumlah * $item->harga_satuan; }), 0, ',', '.') }}</span>
                         </div>
                         <div class="detail-summary-row">
                             <span>Biaya Pengiriman (Ongkir)</span>
@@ -64,7 +64,7 @@
 
                     <div class="detail-total">
                         <span>Total Pembayaran</span>
-                        <span>{{ $transaksi->total_harga_formatted }}</span>
+                        <span>{{ 'Rp ' . number_format($transaksi->total_harga, 0, ',', '.') }}</span>
                     </div>
                 </div>
             </div>

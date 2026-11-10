@@ -25,7 +25,16 @@ class TransaksiController extends Controller
             $query->where('kode_transaksi', 'like', '%' . $request->cari . '%');
         }
 
-        $transaksi = $query->latest()->paginate(15)->withQueryString();
+        // Ambil nilai per_page dari request, default 10 (atau sesuaikan dengan kebutuhan)
+        $perPage = $request->get('per_page', 10);
+
+        // Validasi agar nilai per_page aman dari input sembarangan
+        $allowedPerPage = [10, 20, 50, 100];
+        if (!in_array($perPage, $allowedPerPage)) {
+            $perPage = 10;
+        }
+
+        $transaksi = $query->latest()->paginate($perPage)->withQueryString();
 
         return view('admin.transaksi.index', compact('transaksi'));
     }

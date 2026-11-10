@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('nama');
             $table->text('deskripsi')->nullable();
             $table->unsignedInteger('harga');
-            $table->enum('kategori', ['Ramen', 'Minuman'])->default('Ramen');
+            $table->enum('kategori', ['Makanan', 'Minuman'])->default('Makanan');
             $table->string('gambar')->nullable();
             $table->unsignedInteger('stok')->default(0);
             $table->enum('status', ['tersedia', 'habis'])->default('tersedia');

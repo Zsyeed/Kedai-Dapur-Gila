@@ -89,7 +89,7 @@
 
                 <div class="form-group" style="margin-bottom: 1rem; display: flex; flex-direction: column; gap: 6px;">
                     <label for="status" style="font-weight: 600; font-size: 0.9rem;">Ubah Status</label>
-                    <select id="status" name="status" class="form-select" style="max-width: 300px; border: 1px solid #000;" required>
+                    <select id="status" name="status" class="form-select form-select-sm status-select" style="max-width: 300px; border: 1px solid #000;" required>
                         @if($transaksi->status === 'menunggu')
                             <option value="">Pilih status...</option>
                             <option value="diproses">Diproses</option>
@@ -130,8 +130,20 @@
                 @endforeach
             </div>
 
+            {{-- RINCIAN SUBTOTAL MAKANAN & ONGKIR --}}
+            <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.95rem;">
+                <div style="display: flex; justify-content: space-between; color: #4a5568;">
+                    <span>Subtotal Makanan</span>
+                    <span>{{ 'Rp ' . number_format($transaksi->detailTransaksi->sum(function($item) { return $item->jumlah * $item->harga_satuan; }), 0, ',', '.') }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #4a5568;">
+                    <span>Biaya Pengiriman (Ongkir)</span>
+                    <span>{{ 'Rp ' . number_format($transaksi->ongkir ?? 0, 0, ',', '.') }}</span>
+                </div>
+            </div>
+
             <div class="checkout-total" style="display: flex; justify-content: space-between; align-items: center; border-top: 2px dashed #000; padding-top: 1rem;">
-                <span style="font-size: 1.05rem; font-weight: 600;">Total</span>
+                <span style="font-size: 1.05rem; font-weight: 600;">Total Pembayaran</span>
                 <strong style="font-size: 1.2rem; color: #000;">{{ $transaksi->total_harga_formatted }}</strong>
             </div>
         </div>

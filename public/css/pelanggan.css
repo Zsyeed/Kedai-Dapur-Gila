@@ -129,7 +129,7 @@ a { text-decoration: none; color: inherit; }
 /* =======================================
    4. KARTU MENU & GRID
    ======================================= */
-.menu-section { padding: 4rem 5%; background: #ffffff; }
+.menu-section { padding: 2rem 5%; background: #ffffff; }
 .menu-section.bg-light { background-color: #f8fafc; }
 .section-container { max-width: 1200px; margin: 0 auto; }
 .section-header {
