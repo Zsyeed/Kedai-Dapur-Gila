@@ -66,7 +66,7 @@
 
                         <!-- Pilihan Wilayah / Ongkir (Tangerang & Jakarta) -->
                         <div class="form-group" style="margin-bottom: 1.25rem;">
-                            <label for="wilayah" style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">Wilayah Pengiriman (Dari Ciledug)</label>
+                            <label for="wilayah" style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">Wilayah Pengiriman</label>
                             <select name="wilayah" id="wilayah" class="form-input" required style="width:100%; padding:0.75rem; border:1px solid #d1d5db; border-radius:8px; outline:none; background:#fff;">
                                 <option value="" data-ongkir="0">-- Pilih Wilayah Tujuan --</option>
                                 
@@ -88,7 +88,7 @@
 
                         <!-- Alamat Lengkap -->
                         <div class="form-group" style="margin-bottom: 1.25rem;">
-                            <label for="alamat_pengiriman" style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">Detail Alamat / Patokan</label>
+                            <label for="alamat_pengiriman" style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">Detail Alamat</label>
                             <textarea id="alamat_pengiriman" name="alamat_pengiriman" class="form-input auto-resize" rows="2" required placeholder="Contoh: Jl. Inpres V No.62, RT 01/02...">{{ old('alamat_pengiriman', $user->alamat ?? '') }}</textarea>
                             @error('alamat_pengiriman')
                                 <span class="form-error" style="color:#ef4444; font-size:0.8rem;">{{ $message }}</span>

@@ -3,11 +3,11 @@
 @section('title', 'Profil')
 
 @section('content')
-<section class="section" style="padding: 3rem 1rem; background-color: #f9fafb; min-height: 80vh;">
+<section class="section" style="padding: 2rem 1rem; background-color: #f9fafb; min-height: 80vh;">
     <div style="max-width: 650px; margin: 0 auto;">
         
         <!-- Judul Halaman -->
-        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
             <i class="fas fa-user-circle" style="font-size: 2rem; color: #dc2626;"></i>
             <h2 style="margin: 0; font-size: 1.75rem; font-weight: 700; color: #111827;">Profil Saya</h2>
         </div>

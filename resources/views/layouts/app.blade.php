@@ -7,20 +7,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- CSS Utama Pelanggan -->
     <link rel="stylesheet" href="{{ asset('css/pelanggan.css') }}">
+    
     @stack('styles')
 </head>
 <body>
     
-    <!-- Notifikasi Sukses & Error dengan kelas .alert -->
+    <!-- NOTIFIKASI MELAYANG (FLOATING TOAST) DI TENGAH ATAS -->
     @if(session('success'))
-        <div class="alert alert-success" style="background: #10b981; color: white; padding: 1rem; text-align: center; font-weight: 600;">
-            <i class="fas fa-check-circle"></i> {{ session('success') }}
+        <div class="alert alert-success floating-toast success">
+            <i class="fas fa-check-circle" style="font-size: 1.25rem; color: #10b981;"></i>
+            <span style="flex: 1;">{{ session('success') }}</span>
         </div>
     @endif
+
     @if(session('error'))
-        <div class="alert alert-danger" style="background: #ef4444; color: white; padding: 1rem; text-align: center; font-weight: 600;">
-            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+        <div class="alert alert-danger floating-toast error">
+            <i class="fas fa-exclamation-circle" style="font-size: 1.25rem; color: #ef4444;"></i>
+            <span style="flex: 1;">{{ session('error') }}</span>
         </div>
     @endif
 
@@ -128,18 +134,16 @@
             }
         }
 
-        // Script untuk menghilangkan notifikasi secara otomatis setelah 3 detik
+        // Script untuk menghilangkan notifikasi secara otomatis setelah beberapa detik
         document.addEventListener('DOMContentLoaded', function() {
             const alerts = document.querySelectorAll('.alert');
 
             alerts.forEach(function(alert) {
-                // Tunggu selama 1000 milidetik (1 detik)
                 setTimeout(function() {
-                    // Efek memudar perlahan (fade out)
-                    alert.style.transition = 'opacity 0.5s ease-out';
+                    alert.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
                     alert.style.opacity = '0';
+                    alert.style.transform = 'translate(-50%, -20px)';
 
-                    // Sembunyikan elemen setelah animasi selesai (0.5 detik kemudian)
                     setTimeout(function() {
                         alert.style.display = 'none';
                     }, 500);
