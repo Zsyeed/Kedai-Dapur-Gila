@@ -508,3 +508,42 @@ body {
         grid-column: span 1;
     }
 }
+
+/* ==========================================================
+   CSS HALAMAN STOK PRODUK (PANEL OWNER)
+   ========================================================== */
+.badge-status {
+    padding: 0.4rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+    text-align: center;
+}
+
+.status-habis {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.status-menipis {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #d97706;
+}
+
+.status-aman {
+    background-color: rgba(5, 150, 105, 0.15);
+    color: #059669;
+}
+
+.text-stok-kritis {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #ef4444;
+}
+
+.text-stok-normal {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-main);
+}

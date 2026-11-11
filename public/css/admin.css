@@ -563,3 +563,32 @@ body {
     outline: none;
     cursor: pointer;
 }
+
+/* ==========================================================
+   TOMBOL AKSI UTAMA (SERAGAM DENGAN PANEL OWNER)
+   ========================================================== */
+.btn-red {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: inherit;
+    text-decoration: none;
+    background-color: #ef4444;
+    color: #ffffff;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-red:hover {
+    background-color: #dc2626;
+    color: #ffffff;
+}
+
+.btn-red:active {
+    transform: scale(0.98);
+}

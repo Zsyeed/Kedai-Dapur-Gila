@@ -18,7 +18,7 @@
             <i class="fas fa-filter"></i> Cari
         </button>
     </form>
-    <a href="{{ route('admin.produk.create') }}" class="btn-primary btn-sm">
+    <a href="{{ route('admin.produk.create') }}" class="btn-primary btn-red" style="display:inline-flex; align-items:center; gap:0.5rem;">
         <i class="fas fa-plus"></i> Tambah Produk
     </a>
 </div>
