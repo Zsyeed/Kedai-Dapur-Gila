@@ -79,7 +79,7 @@
             <tfoot>
                 <tr style="background-color: #f8fafc; border-top: 2px solid var(--border-color);">
                     <!-- Colspan diubah menjadi 3 agar pas dengan jumlah kolom di atasnya -->
-                    <td colspan="3" style="text-align: right; font-weight: 600; padding: 1.25rem 1.5rem; color: var(--text-main);">
+                    <td colspan="3" style="text-align: left; font-weight: 600; padding: 1.25rem 1.5rem; color: var(--text-main);">
                         Total Pendapatan :
                     </td>
                     <td style="text-align: right; font-weight: 700; color: #10b981; font-size: 1.1rem; padding: 1.25rem 1.5rem;">
